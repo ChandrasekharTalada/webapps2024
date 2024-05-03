@@ -1,0 +1,3 @@
+service TimestampService {
+    string getTimestamp();
+}
