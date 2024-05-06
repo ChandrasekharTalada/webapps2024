@@ -1,3 +1,0 @@
-service TimestampService {
-    string getTimestamp();
-}
