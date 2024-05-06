@@ -1,0 +1,20 @@
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<link rel="stylesheet" href="{% static 'assets/css/toastr.min.css' %}">
+{% if messages %}
+{% for message in messages %}
+<script>
+    toastr.options = { positionClass: "toast-bottom-right", }
+</script>
+{% if message.tags == 'success'%}
+<script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+{% elif message.tags == 'info' %}
+<script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+{% elif message.tags == 'warning' %}
+<script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+{% elif message.tags == 'error' %}
+<script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+{% endif %}
+{% endfor %}
+{% endif %}
+<script src="{% static 'assets/js/toastr.js' %}" ></script>

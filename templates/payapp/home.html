@@ -1,0 +1,114 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Dashboard {% endblock %}
+{% load tz %}
+{% block content %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title">
+        <span class="text-white me-2">
+        </span> Dashboard
+      </h3>
+      {% include "includes/messages.html" %}
+      <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page">
+            <span></span>Overview</i>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="row">
+      <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-danger card-img-holder text-white">
+          <div class="card-body">
+            <h4 class="font-weight-normal mb-3">Welcome home, {{user.email}}<i
+                class="mdi mdi-home mdi-48px float-end"></i>
+            </h4>
+            <h2 class="mb-5"></h2>
+            <h6 class="card-text">Username : {{user.username}}</h6>
+            <h6 class="card-text">Currency : {{user.currency}}</h6>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-success card-img-holder text-white">
+          <div class="card-body">
+            <h4 class="font-weight-normal mb-5">Transaction Shortcuts
+              <i class="mdi mdi-credit-card mdi-24px float-end"></i>
+            </h4>
+            <div class="mb-4">
+              <a href="{% url 'amount_send' %}" type="button" class="btn btn-lg btn-block btn-rounded"
+                style="background-color: #ae7295; color: #fff; margin-bottom: 10px;">Send Money</a>
+              <a href="{% url 'amount_request' %}" type="button" class="btn btn-lg btn-block btn-rounded"
+                style="background-color: #ae7295; color: #fff; margin-bottom: 10px;">Request Money</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-info card-img-holder text-white">
+          <div class="card-body">
+            <h4 class="font-weight-normal mb-3">Current Balance :<i class="mdi mdi-cash mdi-48px float-end"></i>
+              </i>
+            </h4>
+
+            <h2 class="mb-5"> {{user.currency}} <span id="user_amount">****</span></h2>
+            <button class="btn btn-danger btn-sm mb-2 " id="show_hide" onclick="toggleBalance()">Show</button>
+            <h5>Date : {% now "Y/m/d" %}</h5>
+             
+          </div>
+        </div>
+      </div>
+    </div>
+{#    <div class="row">#}
+{#      <div class="col-lg-8 grid-margin stretch-card">#}
+{#        <div class="card">#}
+{#          <div class="card-body">#}
+{#            <h4 class="card-title" style="background-color: #3498db; color: #fff; padding: 10px;">Recent Updates</h4>#}
+{#            <div class="d-flex mt-5 align-items-top">#}
+{#              <ul>#}
+{#                {% for t in recent_updates %}#}
+{#                <li class="timeline-item mb-5">#}
+{#                  {% if t.transferrer %}#}
+{#                  {% if t.transferrer == request.user %}#}
+{#                  <h5 class="fw-bold">You sent {{ t.transferrer.currency }}{{t.amount}} payment to {{t.obtainer}}</h5>#}
+{#                  {% else %}#}
+{#                  <h5 class="fw-bold"> {{t.transferrer}} sent {{t.transferrer.currency}} {{t.amount}} payment to you</h5>#}
+{#                  {% endif %}#}
+{#                  {% endif %}#}
+{#                  {% if t.pay_to %}#}
+{#                  {% if t.pay_to == request.user %}#}
+{#                  <h5 class="fw-bold">You requested {{t.pay_to.currency}} {{t.amount}} payment from {{t.pay_from}}#}
+{#                  </h5>#}
+{#                  {% else %}#}
+{#                  <h5 class="fw-bold">{{t.pay_to}} requested {{t.pay_to.currency}} {{t.amount}} payment from you</h5>#}
+{#                  {% endif %}#}
+{#                  {% endif %}#}
+{#                  <p class="text-muted mb-2 fw-bold">{{t.created_date}}</p>#}
+{#                </li>#}
+{#                {% endfor %}#}
+{#              </ul>#}
+{#            </div>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+  </div>
+</div>
+
+<script>
+  function toggleBalance() {
+    var userAmount = document.getElementById("user_amount");
+    var button = document.getElementById("show_hide");
+
+    if (userAmount.innerHTML === "****") {
+      userAmount.innerHTML = "{{ user.amount }}";
+      button.innerText = "Hide";
+    } else {
+      userAmount.innerHTML = "****";
+      button.innerText = "Show";
+    }
+  }
+</script>
+{% endblock %}

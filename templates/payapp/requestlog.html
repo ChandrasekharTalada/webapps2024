@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Request Log {% endblock title %}
+{% block content %}
+{% block extra_css %}
+<style>
+    .dt-layout-cell{
+        padding:10px;
+    }
+    .dt-input {
+    margin-left: 10px;
+    outline: 1px solid #70849a;
+    outline-offset: -1px; 
+}
+.dt-paging-button {
+    color: #fff;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.dt-paging-button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.modal-dialog{
+    margin-top:2rem!important;
+    margin-left:40vw!important;
+}
+</style>
+{% endblock extra_css %}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row container p-4 justify-content-between">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+                <h5 class="bg-primary text-center text-white p-2 mb-4 rounded" style="font-weight: 800;background-color:rgb(182 109 255)!important;">Requested Payments
+                </h5>
+                <div class="table-responsive bg-white p-4">
+                    {% include 'includes/messages.html' %}
+                    <table id="requestTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S.N.</th>
+                                <th>Requested From</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pr in requests %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{ pr.pay_to }}</td>
+                                <td>{{ pr.pay_to.currency }} {{ pr.amount }}</td>
+                                <td>
+                                    {% if pr.is_accepted is None %}
+                                    <span class="badge badge-warning">Pending</span>
+                                    {% elif pr.is_accepted %}
+                                    <span class="badge badge-success">Accepted</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if pr.is_accepted is not None %}
+                                    <button type="button" class="btn btn-success" disabled>Resolved</button>
+                                    {% else%}
+                                    <button type="button" class="btn btn-success accept-btn" data-id="{{pr.id}}"
+                                        data-toggle="modal" data-sendto="{{pr.pay_to.uuid}}"
+                                        data-sendfrom="{{pr.pay_from.uuid}}" data-user="{{pr.pay_to.first_name}}"
+                                        data-amount="{{pr.amount}}" data-target="#confirmationModal">Accept</button>
+                                    <button class="btn btn-danger reject-btn" data-toggle="modal"
+                                        data-target="#rejectConfirmationModal" data-id="{{pr.id}}">Reject</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+            aria-hidden="true" style="width:auto">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to accept?</p>
+                        <p class="text-danger">
+                            <i class="fa fa-exclamation-triangle"></i> This action will send amount
+                            <span id="amounttosend"></span> from your account to user <span id="receiver"></span>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <form id="confirmationForm" action="{% url 'amount_request_approve' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" value="" id="trid" name="tr_id">
+                            <input type="hidden" value="" id="sendTo" name="pay_to">
+                            <input type="hidden" value="" id="sendFrom" name="pay_from">
+                            <input type="hidden" value="" id="amounttoSend" name="amount">
+                            <button type="submit" class="btn btn-success">Confirm</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- Reject Confirmation Modal -->
+<div class="modal fade" id="rejectConfirmationModal" tabindex="-1" role="dialog"
+    aria-labelledby="rejectConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectConfirmationModalLabel">Reject Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to reject?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <!-- Add your form submission logic here -->
+                <form id="confirmationForm" action="{% url 'amount_request_reject' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="" id="reject_id" name="tr_id">
+                    <button type="submit" class="btn btn-success">Reject</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $('.accept-btn').click(function () {
+        var user = $(this).data('user');
+        var amount = $(this).data('amount');
+        var sendto = $(this).data('sendto');
+        var sendfrom = $(this).data('sendfrom');
+        var tr_id = $(this).data('id');
+        console.log(tr_id,sendfrom,sendto,amount,user);
+
+        $('#sendTo').val(sendto);
+        $('#sendFrom').val(sendfrom);
+        $('#amounttoSend').val(amount);
+        $('#amounttosend').text(amount);
+        $('#receiver').text(user);
+        $('#trid').val(tr_id);
+    });
+
+    $('.reject-btn').click(function () {
+        var trid = $(this).data('id');
+        console.log("trid:", trid);
+        $('#reject_id').val(trid);
+
+    });
+</script>
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+   
+    <!-- Bootstrap JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+<script>
+    new DataTable('#requestTable');
+</script>
+{% endblock content %}

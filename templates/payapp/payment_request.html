@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Request Payment {% endblock title %}
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-xl-6 col-lg-5 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h3>Payment Request Form</h3>
+                    {% include 'includes/messages.html' %}
+                    <div class="p-2">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="{{ form.pay_from.id_for_label }}">{{ form.pay_from.label }}</label>
+                                {{ form.pay_from }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }} ({{request.user.currency}})</label>
+                                {{ form.amount }}
+                            </div>
+                            <button type="submit" class="btn btn-primary"> Send Request</button>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock content %}

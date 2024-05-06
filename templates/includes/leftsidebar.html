@@ -1,0 +1,88 @@
+ {% load static %}
+ <nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+      <li class="nav-item nav-profile">
+{#        <a href="#" class="nav-link">#}
+{#          #}
+{#          <div class="nav-profile-text d-flex flex-column">#}
+{#            <span class="font-weight-bold mb-2">{{user.email}}</span>#}
+{#          </div>#}
+{#        </a>#}
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'home' %}">
+          <span class="menu-title">Dashboard</span>
+{#          <i class="mdi mdi-home menu-icon"></i>#}
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'transfer_request' %}">
+          <span class="menu-title">Request Log</span>
+{#          <i class="mdi mdi-briefcase-clock menu-icon"></i>#}
+
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'transaction' %}">
+          <span class="menu-title">Activity Log</span>
+{#          <i class="mdi mdi-chart-areaspline menu-icon"></i>#}
+        </a>
+      </li>
+      {% if user.is_superuser %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'transaction_all' %}">
+          <span class="menu-title">Transaction Log</span>
+{#          <i class="mdi mdi-history menu-icon"></i>#}
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'notification' %}">
+          <span class="menu-title">Notification</span>
+{#          <i class="mdi mdi-bell menu-icon"></i>#}
+        </a>
+      </li>
+      {% if user.is_superuser %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'admin_view' %}">
+          <span class="menu-title">Admin Users</span>
+{#          <i class="mdi mdi-account-plus menu-icon"></i>#}
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'users_view' %}">
+          <span class="menu-title"> Users</span>
+{#          <i class="mdi mdi-account-multiple menu-icon"></i>#}
+        </a>
+      </li>
+      {% endif %}
+      
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}">
+          <span class="menu-title">SignOut</span>
+{#          <i class="mdi mdi-logout menu-icon"></i>#}
+
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        // Get the current URL
+        const currentUrl = window.location.href;
+
+        // Get all sidebar links
+        const sidebarLinks = document.querySelectorAll('#sidebar .nav-item a');
+
+        // Loop through sidebar links
+        sidebarLinks.forEach(link => {
+            // Check if link's href matches the current URL
+            if (link.href === currentUrl) {
+                // Add 'active' class to the link's parent li element
+                link.parentNode.classList.add('active');
+            }
+        });
+    });
+</script>
