@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{% endblock title %} | MoneyPay</title>
+
+    {% block extra_css %}{% endblock extra_css %}  
+    {% include 'includes/css.html' %}
+   
+  </head>
+  
+  <body>
+    
+    <div class="container-scroller">
+        {% if request.user.is_authenticated %}
+      {% include 'includes/nav.html' %}
+      {% endif %}
+      <div class="container-fluid page-body-wrapper">
+        {% if request.user.is_authenticated %}
+       {% include 'includes/leftsidebar.html' %}
+        {% endif %}
+       {% block content %}
+       {% endblock content %}
+       {% include "includes/messages.html" %}
+      </div>
+    </div>
+    {% include 'includes/scripts.html' %}
+    {% block extra_script %}{% endblock extra_script %}
+  </body>
+</html>
