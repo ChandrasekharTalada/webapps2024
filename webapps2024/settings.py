@@ -32,7 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -70,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'payapp.context_processors.notif_count',
             ],
         },
     },
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'webapps2024.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'webapps.db.sqlite3',
+        'NAME': BASE_DIR / 'webapps.db',
     }
 }
 
@@ -136,4 +136,4 @@ MEDIA_ROOT = "/var/www/webapps2024/media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'register.CustomUser'
+AUTH_USER_MODEL = 'register.User'
